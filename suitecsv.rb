@@ -60,14 +60,14 @@ class MergeCSV < SuiteCSV
 			
 			# Add this row to th
 			if not already_present
-				#@matrix.push other_row
 				$stdout.puts "Adding row: #{other_row}"
+				$stdout.puts push_row(other_row, other.headers)
 			end
 		end
 
 	end
 	
-	# Do the keys from my_row match the key from other_row
+	# Do the keys from my_row match the key from other_row?
 	def keys_match?(my_row, other_row, other_headers)
 		@keys.each do |key|
 			# Get each index of this key
@@ -75,7 +75,7 @@ class MergeCSV < SuiteCSV
 			other_index = other_headers.index(key)
 			
 			# If each value at this key doesn't match, return false
-			if not my_row[my_index] == other_row[other_index]
+			if not my_row[my_index] =~ /^#{other_row[other_index]}$/i
 				return false
 			end
 		end
@@ -84,7 +84,25 @@ class MergeCSV < SuiteCSV
 		return true
 	end
 	
-	private :keys_match?
+	# Put the other row into our CSV, matching headers
+	def push_row(other_row, other_headers)
+		# initialize the new array
+		new_row = Array.new(@headers.length)
+		
+		# Iterate headers, building our new row
+		0.upto @headers.length-1 do |my_index|		
+			# Find the index of this column in the other CSV
+			other_index = other_headers.index( @headers[my_index] )
+			
+			# Put the value into the corresponding column in our CSV
+			new_row[my_index] = other_row[other_index]
+		end
+		
+		# Add this row into our matrix
+		@matrix.push new_row
+	end
+	
+	private :keys_match?, :push_row
 end
 
 # Take two CSVs and produce a result that is the overlap of
