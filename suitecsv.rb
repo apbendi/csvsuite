@@ -8,9 +8,22 @@ class SuiteCSV < CSV
 	# Always require headers to be true
 	# Read the file & load it into a matrix
 	def initialize(filename)
-		@filename = filename
-		super File.new(@filename), {:headers => true}
+		super File.new(filename), {:headers => true}
 		@matrix = self.read
+	end
+	
+	## THIS SHOULD BE CLEANER IF WE CORRECTLY LEVERAGE THE 
+	## CSV::TABLE & CSV::ROW classes
+	def write(filename)
+		
+		out_file = File.new filename, "w"
+		out_file.puts @headers.join(",")
+		
+		@matrix.each do |row|
+			out_file.puts row.to_csv
+		end
+		
+		out_file.close
 	end
 	
 end
@@ -61,11 +74,14 @@ class MergeCSV < SuiteCSV
 			# Add this row to th
 			if not already_present
 				$stdout.puts "Adding row: #{other_row}"
-				$stdout.puts push_row(other_row, other.headers)
+				push_row(other_row, other.headers)
 			end
 		end
 
 	end
+	
+	## BEGIN PRIVATE METHODS ##
+	private
 	
 	# Do the keys from my_row match the key from other_row?
 	def keys_match?(my_row, other_row, other_headers)
@@ -99,10 +115,8 @@ class MergeCSV < SuiteCSV
 		end
 		
 		# Add this row into our matrix
-		@matrix.push new_row
+		@matrix<< new_row
 	end
-	
-	private :keys_match?, :push_row
 end
 
 # Take two CSVs and produce a result that is the overlap of
@@ -121,6 +135,7 @@ sample1 = MergeCSV.new("sample1.csv", ["internal id", "last name"])
 sample2 = SuiteCSV.new("sample2.csv")
 
 sample1.merge sample2
+sample1.write "results.csv"
 
 #puts sample1.headers
 
