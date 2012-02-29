@@ -131,11 +131,16 @@ class JoinCSV < SuiteCSV
 	end
 end
 
-sample1 = MergeCSV.new("sample1.csv", ["internal id", "last name"])
-sample2 = SuiteCSV.new("sample2.csv")
+#sample1 = MergeCSV.new("sample1.csv", ["internal id", "last name"])
+#sample2 = SuiteCSV.new("sample2.csv")
+rented = MergeCSV.new("../rented_us_pastors_splitzip.csv", ["l_name", "split_zip"])
+chads = SuiteCSV.new("../chad_us_pastors_splitzip.csv")
 
-sample1.merge sample2
-sample1.write "results.csv"
+#sample1.merge sample2
+#sample1.write "results.csv"
+
+rented.merge chads
+rented.write "results.csv"
 
 #puts sample1.headers
 
