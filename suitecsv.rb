@@ -1,5 +1,7 @@
 require 'csv'
 
+# This is a test!
+
 class SuiteCSV < CSV
 	
 	attr_reader :matrix
