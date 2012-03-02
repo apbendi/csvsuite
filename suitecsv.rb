@@ -89,13 +89,10 @@ class MergeCSV < SuiteCSV
 	
 	# Do the keys from my_row match the key from other_row?
 	def keys_match?(my_row, other_row, other_headers)
+		
+		# If each value at this key doesn't match, return false
 		@keys.each do |key|
-			# Get each index of this key
-			my_index = @headers.index(key)
-			other_index = other_headers.index(key)
-			
-			# If each value at this key doesn't match, return false
-			if not my_row[my_index] =~ /^#{other_row[other_index]}$/i
+			if not my_row[key] =~ /^#{other_row[key]}$/i
 				return false
 			end
 		end
@@ -110,12 +107,10 @@ class MergeCSV < SuiteCSV
 		new_row = Array.new(@headers.length)
 		
 		# Iterate headers, building our new row
-		0.upto @headers.length-1 do |my_index|		
-			# Find the index of this column in the other CSV
-			other_index = other_headers.index( @headers[my_index] )
+		0.upto @headers.length-1 do |index|		
 			
 			# Put the value into the corresponding column in our CSV
-			new_row[my_index] = other_row[other_index]
+			new_row[index] = other_row[ @headers[index] ]
 		end
 		
 		# Add this row into our matrix
@@ -135,19 +130,19 @@ class JoinCSV < SuiteCSV
 	end
 end
 
-#sample1 = MergeCSV.new("sample1.csv", ["internal id", "last name"])
-#sample2 = SuiteCSV.new("sample2.csv")
+sample1 = MergeCSV.new("sample1.csv", ["internal id", "last name"])
+sample2 = SuiteCSV.new("sample2.csv")
 #rented = MergeCSV.new("../rented_us_pastors_splitzip.csv", ["l_name", "split_zip"])
 #chads = SuiteCSV.new("../chad_us_pastors_splitzip.csv")
 
-rented = MergeCSV.new("../rented_metuchen_etc_pastors_splitzip.csv", ["l_name", "split_zip"])
-netsuite = SuiteCSV.new("../netsuite_metuchen_etc_pastors_splitzip.csv")
+#rented = MergeCSV.new("../rented_metuchen_etc_pastors_splitzip.csv", ["l_name", "split_zip"])
+#netsuite = SuiteCSV.new("../netsuite_metuchen_etc_pastors_splitzip.csv")
 
-#sample1.merge sample2
-#sample1.write "results.csv"
+sample1.merge sample2
+sample1.write "results.csv"
 
-rented.merge netsuite
-rented.write "results.csv"
+#rented.merge netsuite
+#rented.write "results.csv"
 
 #puts sample1.headers
 
