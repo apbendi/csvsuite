@@ -28,8 +28,6 @@ class SuiteCSV < CSV
 	
 end
 
-# Take two CSVs and produce a result that is the combination
-# of the two w/o repeats
 class MergeCSV < SuiteCSV
 
 	attr_reader :keys
@@ -46,11 +44,15 @@ class MergeCSV < SuiteCSV
 		end
 	end
 	
+	# Take another CSV & Merge it into this CSV.
+	# Afterwards this CSV will be the combination of the two
+	# without duplicates, based on comparison of keys
 	def merge(other)
 		
 		# Ensure the other CSV has the same headers
 		@headers.each do |header|
 			if not other.headers.index(header)
+				$stdout.puts "Warning: could not find header: #{header}"
 				return false
 			end
 		end
@@ -80,7 +82,9 @@ class MergeCSV < SuiteCSV
 
 	end
 	
+	###########################
 	## BEGIN PRIVATE METHODS ##
+	###########################
 	private
 	
 	# Do the keys from my_row match the key from other_row?
@@ -133,13 +137,16 @@ end
 
 #sample1 = MergeCSV.new("sample1.csv", ["internal id", "last name"])
 #sample2 = SuiteCSV.new("sample2.csv")
-rented = MergeCSV.new("../rented_us_pastors_splitzip.csv", ["l_name", "split_zip"])
-chads = SuiteCSV.new("../chad_us_pastors_splitzip.csv")
+#rented = MergeCSV.new("../rented_us_pastors_splitzip.csv", ["l_name", "split_zip"])
+#chads = SuiteCSV.new("../chad_us_pastors_splitzip.csv")
+
+rented = MergeCSV.new("../rented_metuchen_etc_pastors_splitzip.csv", ["l_name", "split_zip"])
+netsuite = SuiteCSV.new("../netsuite_metuchen_etc_pastors_splitzip.csv")
 
 #sample1.merge sample2
 #sample1.write "results.csv"
 
-rented.merge chads
+rented.merge netsuite
 rented.write "results.csv"
 
 #puts sample1.headers
