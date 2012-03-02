@@ -67,7 +67,7 @@ class MergeCSV < SuiteCSV
 			@matrix.each do |my_row|
 			
 				# If the keys match this row is present - stop checking
-				if keys_match?(my_row, other_row, other.headers)
+				if keys_match?(my_row, other_row)
 					already_present = true
 					break
 				end
@@ -76,7 +76,7 @@ class MergeCSV < SuiteCSV
 			# Add this row to th
 			if not already_present
 				$stdout.puts "Adding row: #{other_row}"
-				push_row(other_row, other.headers)
+				push_row other_row
 			end
 		end
 
@@ -88,7 +88,7 @@ class MergeCSV < SuiteCSV
 	private
 	
 	# Do the keys from my_row match the key from other_row?
-	def keys_match?(my_row, other_row, other_headers)
+	def keys_match?(my_row, other_row)
 		
 		# If each value at this key doesn't match, return false
 		@keys.each do |key|
@@ -102,7 +102,7 @@ class MergeCSV < SuiteCSV
 	end
 	
 	# Put the other row into our CSV, matching headers
-	def push_row(other_row, other_headers)
+	def push_row(other_row)
 		# initialize the new array
 		new_row = Array.new(@headers.length)
 		
