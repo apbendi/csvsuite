@@ -132,8 +132,14 @@ class JoinCSV < SuiteCSV
 	end
 end
 
-test = CSV.open("sample2.csv")
-puts test.read
+test = CSV.new File.new("sample2.csv", "a+"), {:headers => true, :return_headers => true}
+puts test.shift
+test.shift<< "4th Column"
+test<< [9, "Foo", "Bar"]
+puts test.shift
+test<< [12, "Pat", "Patel"]
+test<< [ [9, "Foo", "Bar"], [12, "Pat", "Patel"] ]
+
 
 #sample1 = MergeCSV.new("sample1.csv", ["internal id", "last name"])
 #sample2 = SuiteCSV.new("sample2.csv")
