@@ -32,7 +32,9 @@ class SuiteCSV < CSV
 		
 		# Split each zip and add it to the new column
 		@matrix.each do |row|
-			first_half = row[zip_col].split(/-/).first
+			if row[zip_col]
+				first_half = row[zip_col].split(/-/).first
+			end
 			row<< [new_col, first_half]
 		end
 	end
@@ -155,9 +157,17 @@ class JoinCSV < SuiteCSV
 	end
 end
 
-sample1 = SuiteCSV.new "sample1.csv"
-sample1.split_zip "zip", "split_zip"
-sample1.write "split_results.csv"
+#rented_dres = SuiteCSV.new "../rented_us_DREs.csv"
+#rented_dres.split_zip "zip", "split_zip"
+#rented_dres.write "../rented_us_DREs_splitzip.csv"
+
+net_dres = SuiteCSV.new "../netsuite_us_DREs.csv"
+net_dres.split_zip "zip", "split_zip"
+net_dres.write "../netsuite_us_DREs_splitzip.csv"
+
+#sample1 = SuiteCSV.new "sample1.csv"
+#sample1.split_zip "zip", "split_zip"
+#sample1.write "split_results.csv"
 
 #sample1 = MergeCSV.new("sample1.csv", ["internal id", "last name"])
 #sample2 = SuiteCSV.new("sample2.csv")
