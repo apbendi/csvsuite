@@ -39,15 +39,39 @@ class SuiteCSV < CSV
 		end
 	end
 	
-	## THIS SHOULD BE CLEANER IF WE CORRECTLY LEVERAGE THE 
-	## CSV::TABLE & CSV::ROW classes
+	# Add an "=" sign, double quotes & a space to each value in col
+	# This is the only reliable way to force Excel to treat the
+	# column as a string & prevent loss of leading zeros in things like
+	# zip codes.  Since these quotes would be escaped when converted to_csv,
+	# we'll add open & close tags and sub them at write time
+	def excelify(col)
+		
+		# Make sure the column exists
+		if not @headers.index(col)
+			raise "ERROR- can not excelify column #{col}; not found!"
+		end
+		
+		@matrix.each do |row|
+			# Ignore the case when the cell value is nil
+			if row[col]
+				row[col] = "|EXCEL_OPEN|" + row[col] + "|EXCEL_CLOSE|"
+			end
+		end
+	end
+	
 	def write(filename)
 		
 		out_file = File.new filename, "w"
 		out_file.puts @headers.to_csv
 		
 		@matrix.each do |row|
-			out_file.puts row.to_csv
+			# ignore nil row
+			if row
+				# Swap out open close tags to prevent escaping
+				# TODO: could be made more efficient by using an instance var to track if anything
+				# has actually been excelified
+				out_file.puts row.to_csv.gsub("|EXCEL_OPEN|", "=\"").gsub("|EXCEL_CLOSE|", " \"")
+			end
 		end
 		
 		out_file.close
@@ -79,8 +103,7 @@ class MergeCSV < SuiteCSV
 		# Ensure the other CSV has the same headers
 		@headers.each do |header|
 			if not other.headers.index(header)
-				$stdout.puts "Warning: could not find header: #{header}"
-				return false
+				raise "ERROR: headers do not match, could not find: #{header}"
 			end
 		end
 		
@@ -100,10 +123,12 @@ class MergeCSV < SuiteCSV
 				end
 			end
 			
-			# Add this row to th
+			# Add this row to our table
 			if not already_present
 				$stdout.puts "Adding row: #{other_row}"
 				push_row other_row
+			else
+				$stdout.puts "Ignoring match: #{other_row}"
 			end
 		end
 
@@ -161,9 +186,18 @@ end
 #rented_dres.split_zip "zip", "split_zip"
 #rented_dres.write "../rented_us_DREs_splitzip.csv"
 
-net_dres = SuiteCSV.new "../netsuite_us_DREs.csv"
-net_dres.split_zip "zip", "split_zip"
-net_dres.write "../netsuite_us_DREs_splitzip.csv"
+#net_dres = SuiteCSV.new "../netsuite_us_DREs.csv"
+#net_dres.split_zip "zip", "split_zip"
+#net_dres.write "../netsuite_us_DREs_splitzip.csv"
+
+#rented = MergeCSV.new("../rented_us_DREs_splitzip.csv", ["l_name", "split_zip"])
+#netsuite = SuiteCSV.new("../netsuite_us_DREs_splitzip.csv")
+#rented.merge netsuite
+#rented.write "merged_us_DREs.csv"
+
+merged = SuiteCSV.new("merged_us_DREs.csv")
+merged.excelify "zip"
+merged.write "merged_us_DREs_excelified.csv"
 
 #sample1 = SuiteCSV.new "sample1.csv"
 #sample1.split_zip "zip", "split_zip"
