@@ -12,12 +12,37 @@ class SuiteCSV < CSV
 		@matrix = self.read
 	end
 	
+	# Given the current zip column and the name of new column
+	# Split the zip column values on '-' and put the first half
+	# in the new column
+	def split_zip(zip_col, new_col)
+	
+		# Make sure zip column does exist
+		if not @headers.index(zip_col)
+			raise "ERROR- couldn't find indicated zip column: #{zip_col}"
+		end
+		
+		# Make sure new column doesn't exist
+		if @headers.index(new_col)
+			raise "ERROR- new column already exists; overwrite not permitted"
+		end
+		
+		# Add the new column to the headers
+		@headers<< new_col
+		
+		# Split each zip and add it to the new column
+		@matrix.each do |row|
+			first_half = row[zip_col].split(/-/).first
+			row<< [new_col, first_half]
+		end
+	end
+	
 	## THIS SHOULD BE CLEANER IF WE CORRECTLY LEVERAGE THE 
 	## CSV::TABLE & CSV::ROW classes
 	def write(filename)
 		
 		out_file = File.new filename, "w"
-		out_file.puts @headers.join(",")
+		out_file.puts @headers.to_csv
 		
 		@matrix.each do |row|
 			out_file.puts row.to_csv
@@ -130,16 +155,20 @@ class JoinCSV < SuiteCSV
 	end
 end
 
-sample1 = MergeCSV.new("sample1.csv", ["internal id", "last name"])
-sample2 = SuiteCSV.new("sample2.csv")
+sample1 = SuiteCSV.new "sample1.csv"
+sample1.split_zip "zip", "split_zip"
+sample1.write "split_results.csv"
+
+#sample1 = MergeCSV.new("sample1.csv", ["internal id", "last name"])
+#sample2 = SuiteCSV.new("sample2.csv")
 #rented = MergeCSV.new("../rented_us_pastors_splitzip.csv", ["l_name", "split_zip"])
 #chads = SuiteCSV.new("../chad_us_pastors_splitzip.csv")
 
 #rented = MergeCSV.new("../rented_metuchen_etc_pastors_splitzip.csv", ["l_name", "split_zip"])
 #netsuite = SuiteCSV.new("../netsuite_metuchen_etc_pastors_splitzip.csv")
 
-sample1.merge sample2
-sample1.write "results.csv"
+#sample1.merge sample2
+#sample1.write "results.csv"
 
 #rented.merge netsuite
 #rented.write "results.csv"
