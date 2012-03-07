@@ -12,7 +12,7 @@ class SuiteCSV < CSV
 		@matrix = self.read
 	end
 	
-	# Given the current zip column and the name of new column
+	# Given the current zip column and the name of a new column
 	# Split the zip column values on '-' and put the first half
 	# in the new column
 	def split_zip(zip_col, new_col)
@@ -170,8 +170,6 @@ class MergeCSV < SuiteCSV
 	end
 end
 
-# Take two CSVs and produce a result that is the overlap of
-# the two w/o repeats
 class JoinCSV < SuiteCSV
 	
 	attr_reader :keys
@@ -179,8 +177,72 @@ class JoinCSV < SuiteCSV
 	def initialize(filename, keys)
 		@keys = keys
 		super(filename)
+		
+		# Ensure the CSV has a header for each defined key
+		@keys.each do |key|
+			if not @headers.index(key)
+				raise "ERROR: could not find header for key: #{key}"
+		  	end
+		end
 	end
+	
+	# Take two CSVs and produce a result that is the overlap of
+	# the two w/o repeats
+	def join(other)
+		
+		# Ensure the other CSV has the keys present
+		@keys.each do |key|
+			if not other.headers.index(key)
+				raise "ERROR: Could not find key column #{key} in other CSV"
+			end
+		end
+		
+		# Iterate our matrix removing rows not present in the other CSV
+		0.upto @matrix.length do |index|
+			if not also_present?(@matrix[index], other)
+				@matrix.delete index
+			end
+		end
+	end
+	
+	private
+	
+	# Is this row present in the other CSV?
+	def also_present?(row, other)
+	
+		other.matrix.each do |other_row|
+			if keys_match?(row, other_row)
+				return true
+			end
+		end
+		
+		return false
+	end
+	
+	# Do the keys from my_row match the key from other_row?
+	def keys_match?(my_row, other_row)
+		# Ensure arguments are not nil
+		if not (my_row and other_row)
+			return nil
+		end
+		
+		# If each value at this key doesn't match, return false
+		@keys.each do |key|
+			if not my_row[key] =~ /^#{other_row[key]}$/i
+				return false
+			end
+		end
+		
+		# If we checked values at each key w/o mismatch, its the same
+		return true
+	end
+
 end
+
+sample1 = JoinCSV.new "sample1.csv", ["internal id", "last name"]
+sample2 = SuiteCSV.new "sample2.csv"
+sample1.join sample2
+sample1.write "results_join.csv"
 
 #rented_dres = SuiteCSV.new "../rented_us_DREs.csv"
 #rented_dres.split_zip "zip", "split_zip"
@@ -195,9 +257,9 @@ end
 #rented.merge netsuite
 #rented.write "merged_us_DREs.csv"
 
-merged = SuiteCSV.new("merged_us_DREs.csv")
-merged.excelify "zip"
-merged.write "merged_us_DREs_excelified.csv"
+#merged = SuiteCSV.new("merged_us_DREs.csv")
+#merged.excelify "zip"
+#merged.write "merged_us_DREs_excelified.csv"
 
 #sample1 = SuiteCSV.new "sample1.csv"
 #sample1.split_zip "zip", "split_zip"
