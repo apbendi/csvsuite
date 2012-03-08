@@ -131,7 +131,6 @@ class MergeCSV < SuiteCSV
 				$stdout.puts "Ignoring match: #{other_row}"
 			end
 		end
-
 	end
 	
 	###########################
@@ -197,12 +196,115 @@ class JoinCSV < SuiteCSV
 			end
 		end
 		
+		indices = []
+		
+		
+		length = @matrix.length
+		removed_count = 0
 		# Iterate our matrix removing rows not present in the other CSV
-		0.upto @matrix.length do |index|
-			if not also_present?(@matrix[index], other)
-				@matrix.delete index
+		0.upto length do |index|
+			if not @matrix[index-removed_count]
+				next
+			end
+			if not also_present?(@matrix[index-removed_count], other)
+				indices<< index
+				@matrix.delete(index-removed_count)
+				removed_count += 1
+				#$stdout.puts index.to_s + ": " + @matrix[index].to_s
+				#if not @matrix[index].to_s.length > 2
+				#	raise "Huh? " + index.to_s
+				#end
+				#$stdout.puts "Delete: " + index.to_s + "- " + @matrix[index]["split_zip"]
+			else
+				$stdout.puts index.to_s + ": " + @matrix[index-removed_count].to_s
+				#$stdout.puts "Match: " + index.to_s + "- " + @matrix[index]["split_zip"]
 			end
 		end
+		
+		#(indices.length-1).downto 0 do |
+		
+		#old_matrix = @matrix
+		#@matrix = CSV::Table.new @headers
+		
+		#old_matrix.each do |row|
+		#	if also_present?(row, other)
+		#		@matrix<< row
+		#		$stdout.puts "Keep: " + row["split_zip"]
+		#	else
+		#		$stdout.puts "Delete: " + row["split_zip"]
+		#	end
+		#end
+		
+		#@matrix.each do |row|
+		#	if also_present?(row, other)
+		#		$stdout.puts "Keep: " + row["split_zip"]
+		#	else
+		#		$stdout.puts "Delete: " + row["split_zip"]
+		#		@matrix.delete @matrix.index(row)
+		#	end
+		#end
+		
+		
+	end
+	
+	def unjoin(other)
+		
+		# Ensure the other CSV has the keys present
+		@keys.each do |key|
+			if not other.headers.index(key)
+				raise "ERROR: Could not find key column #{key} in other CSV"
+			end
+		end
+		
+		indices = []
+		
+		
+		length = @matrix.length
+		removed_count = 0
+		# Iterate our matrix removing rows not present in the other CSV
+		0.upto length do |index|
+			if not @matrix[index-removed_count]
+				next
+			end
+			if not also_present?(@matrix[index-removed_count], other)
+				indices<< index
+				#$stdout.puts index.to_s + ": " + @matrix[index].to_s
+				#if not @matrix[index].to_s.length > 2
+				#	raise "Huh? " + index.to_s
+				#end
+				#$stdout.puts "Delete: " + index.to_s + "- " + @matrix[index]["split_zip"]
+			else
+				$stdout.puts index.to_s + ": " + @matrix[index-removed_count].to_s
+				#$stdout.puts "Match: " + index.to_s + "- " + @matrix[index]["split_zip"]
+				@matrix.delete(index-removed_count)
+				removed_count += 1
+			end
+		end
+		
+		#(indices.length-1).downto 0 do |
+		
+		#old_matrix = @matrix
+		#@matrix = CSV::Table.new @headers
+		
+		#old_matrix.each do |row|
+		#	if also_present?(row, other)
+		#		@matrix<< row
+		#		$stdout.puts "Keep: " + row["split_zip"]
+		#	else
+		#		$stdout.puts "Delete: " + row["split_zip"]
+		#	end
+		#end
+		
+		#@matrix.each do |row|
+		#	if also_present?(row, other)
+		#		$stdout.puts "Keep: " + row["split_zip"]
+		#	else
+		#		$stdout.puts "Delete: " + row["split_zip"]
+		#		@matrix.delete @matrix.index(row)
+		#	end
+		#end
+		
+		
 	end
 	
 	private
@@ -233,16 +335,30 @@ class JoinCSV < SuiteCSV
 			end
 		end
 		
+		#$stdout.puts "Match: " + my_row["split_zip"] + " AND " + other_row["split_zip"]
+		
 		# If we checked values at each key w/o mismatch, its the same
 		return true
 	end
 
 end
 
-sample1 = JoinCSV.new "sample1.csv", ["internal id", "last name"]
-sample2 = SuiteCSV.new "sample2.csv"
-sample1.join sample2
-sample1.write "results_join.csv"
+
+#contra = SuiteCSV.new "../contra-pamphlet-full.csv"
+#contra.split_zip "zip", "split_zip"
+#contra.write "contra-pampphlet-full-splitzip.csv"
+
+contra_zip = JoinCSV.new "contra-pampphlet-full-splitzip.csv", ["split_zip"]
+philly_zips = SuiteCSV.new "../Philly_Zips.csv"
+#contra_zip.join philly_zips
+#contra_zip.write "contra-pamphlet-removed-philly.csv"
+contra_zip.unjoin philly_zips
+contra_zip.write "contra-pamphlet-with-philly-removed.csv"
+
+#sample1 = JoinCSV.new "sample1.csv", ["internal id", "last name"]
+#sample2 = SuiteCSV.new "sample2.csv"
+#sample1.join sample2
+#sample1.write "results_join.csv"
 
 #rented_dres = SuiteCSV.new "../rented_us_DREs.csv"
 #rented_dres.split_zip "zip", "split_zip"
