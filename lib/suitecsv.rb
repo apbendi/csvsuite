@@ -57,6 +57,9 @@ class SuiteCSV < CSV
 				row[col] = "|EXCEL_OPEN|" + row[col] + "|EXCEL_CLOSE|"
 			end
 		end
+		
+		# Set to true so the write method knows to sub tags
+		@excelified = true
 	end
 	
 	def write(filename)
@@ -67,10 +70,12 @@ class SuiteCSV < CSV
 		@matrix.each do |row|
 			# ignore nil row
 			if row
-				# Swap out open close tags to prevent escaping
-				# TODO: could be made more efficient by using an instance var to track if anything
-				# has actually been excelified
-				out_file.puts row.to_csv.gsub("|EXCEL_OPEN|", "=\"").gsub("|EXCEL_CLOSE|", " \"")
+				if @excelified
+					# Swap out open close tags to prevent escaping
+					out_file.puts row.to_csv.gsub("|EXCEL_OPEN|", "=\"").gsub("|EXCEL_CLOSE|", " \"")
+				else
+					out_file.puts row.to_csv
+				end
 			end
 		end
 		
