@@ -1,15 +1,19 @@
 require 'csv'
 
-class SuiteCSV < CSV
+class SuiteCSV
+	# Re-map appropriate methods to the internal table
+	extend Forwardable
+	def_delegators :@matrix, :<<, :each 
 	
-	attr_reader :matrix
+	attr_reader :headers
 	
 	# Only accept filenames, not strings, when defining a CSV
 	# Always require headers to be true
 	# Read the file & load it into a matrix
 	def initialize(filename)
-		super File.new(filename), {:headers => true}
-		@matrix = self.read
+		myCSV = CSV.new File.new(filename), {:headers => true}
+		@matrix = myCSV.read
+		@headers = myCSV.headers
 	end
 	
 	# Given the current zip column and the name of a new column
