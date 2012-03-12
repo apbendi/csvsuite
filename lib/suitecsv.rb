@@ -112,7 +112,7 @@ class MergeCSV < SuiteCSV
 		end
 		
 		# Go through each row in the other CSV
-		other.matrix.each do |other_row|
+		other.each do |other_row|
 		
 			# init the var to track whether this row is already present
 			already_present = false
@@ -253,7 +253,7 @@ class JoinCSV < SuiteCSV
 	# Is this row present in the other CSV?
 	def also_present?(row, other)
 	
-		other.matrix.each do |other_row|
+		other.each do |other_row|
 			if keys_match?(row, other_row)
 				return true
 			end
