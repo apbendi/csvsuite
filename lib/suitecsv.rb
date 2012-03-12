@@ -113,12 +113,15 @@ class MergeCSV < SuiteCSV
 		
 		# Go through each row in the other CSV
 		other.each do |other_row|
+			$stdout.puts ">Line: " + other_row.to_s
 		
 			# init the var to track whether this row is already present
 			already_present = false
 			
 			# Go through each row in myself, see if the other's row is here
 			@matrix.each do |my_row|
+			
+				$stdout.puts "\tTesting: " + my_row.to_s
 			
 				# If the keys match this row is present - stop checking
 				if keys_match?(my_row, other_row)
@@ -147,7 +150,7 @@ class MergeCSV < SuiteCSV
 		
 		# If each value at this key doesn't match, return false
 		@keys.each do |key|
-			if not my_row[key] =~ /^#{other_row[key]}$/i
+			if not my_row[key].to_s =~ /^#{other_row[key].to_s}$/i
 				return false
 			end
 		end
@@ -271,7 +274,7 @@ class JoinCSV < SuiteCSV
 		
 		# If each value at this key doesn't match, return false
 		@keys.each do |key|
-			if not my_row[key] =~ /^#{other_row[key]}$/i
+			if not my_row[key].to_s =~ /^#{other_row[key].to_s}$/i
 				return false
 			end
 		end
