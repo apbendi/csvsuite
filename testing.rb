@@ -2,18 +2,41 @@ $LOAD_PATH << "lib"
 
 require 'suitecsv.rb'
 
+sample1 = MergeCSV.new "sample1.csv", ["internal id", "last name"]
+sample1<< [15, "Jones", "Bob"]
+sample1<< [8, "Jobs", "Steve", "37691"]
+
+
+sample2 = SuiteCSV.new "sample2.csv"
+#sample2<< [1, "John", "Smith", "65775"]
+#sample2<< [8, "Steve", "Jobs", "37691"] 
+#sample2<< [15, "Bob", "Jones"]
+#sample2<< [14, "New", "Person"]
+
+sample1.merge sample2
+
+sample1.write "sample1_results.csv"
+
+sample12 = JoinCSV.new "sample1_results.csv", ["internal id", "last name"]
+sample12.join sample2
+sample12.write "sample2_again.csv"
+
+sample21 = JoinCSV.new "sample1_results.csv", ["internal id", "last name"]
+sample21.unjoin SuiteCSV.new "sample1.csv"
+sample21.write "sample1_again.csv"
+
 #contra = SuiteCSV.new "../contra-pamphlet-full.csv"
 #contra.split_zip "zip", "split_zip"
 #contra.write "contra-pampphlet-full-splitzip.csv"
 
-contra_zip = JoinCSV.new "contra-pampphlet-full-splitzip.csv", ["split_zip"]
+#contra_zip = JoinCSV.new "contra-pampphlet-full-splitzip.csv", ["split_zip"]
 #philly_zips = SuiteCSV.new "../Philly_Zips.csv"
 #contra_zip.join philly_zips
 #contra_zip.write "contra-pamphlet-removed-philly-2.csv"
 #contra_zip.unjoin philly_zips
 #contra_zip.matrix.delete "split_zip"
-contra_zip.excelify "split_zip"
-contra_zip.write "contra-excelify-test.csv"
+
+#contra_zip.write "contra-pamphlet-with-philly-removed-2.csv"
 
 #sample1 = JoinCSV.new "sample1.csv", ["internal id", "last name"]
 #sample2 = SuiteCSV.new "sample2.csv"

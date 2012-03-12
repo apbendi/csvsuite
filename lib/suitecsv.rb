@@ -1,15 +1,19 @@
 require 'csv'
 
-class SuiteCSV < CSV
+class SuiteCSV
+	# Re-map appropriate methods to the internal table
+	extend Forwardable
+	def_delegators :@matrix, :<<, :each 
 	
-	attr_reader :matrix
+	attr_reader :headers
 	
 	# Only accept filenames, not strings, when defining a CSV
 	# Always require headers to be true
 	# Read the file & load it into a matrix
 	def initialize(filename)
-		super File.new(filename), {:headers => true}
-		@matrix = self.read
+		myCSV = CSV.new File.new(filename), {:headers => true}
+		@matrix = myCSV.read
+		@headers = myCSV.headers
 	end
 	
 	# Given the current zip column and the name of a new column
@@ -113,13 +117,16 @@ class MergeCSV < SuiteCSV
 		end
 		
 		# Go through each row in the other CSV
-		other.matrix.each do |other_row|
+		other.each do |other_row|
+			$stdout.puts ">Line: " + other_row.to_s
 		
 			# init the var to track whether this row is already present
 			already_present = false
 			
 			# Go through each row in myself, see if the other's row is here
 			@matrix.each do |my_row|
+			
+				$stdout.puts "\tTesting: " + my_row.to_s
 			
 				# If the keys match this row is present - stop checking
 				if keys_match?(my_row, other_row)
@@ -148,7 +155,7 @@ class MergeCSV < SuiteCSV
 		
 		# If each value at this key doesn't match, return false
 		@keys.each do |key|
-			if not my_row[key] =~ /^#{other_row[key]}$/i
+			if not my_row[key].to_s =~ /^#{other_row[key].to_s}$/i
 				return false
 			end
 		end
@@ -254,7 +261,7 @@ class JoinCSV < SuiteCSV
 	# Is this row present in the other CSV?
 	def also_present?(row, other)
 	
-		other.matrix.each do |other_row|
+		other.each do |other_row|
 			if keys_match?(row, other_row)
 				return true
 			end
@@ -272,7 +279,7 @@ class JoinCSV < SuiteCSV
 		
 		# If each value at this key doesn't match, return false
 		@keys.each do |key|
-			if not my_row[key] =~ /^#{other_row[key]}$/i
+			if not my_row[key].to_s =~ /^#{other_row[key].to_s}$/i
 				return false
 			end
 		end
