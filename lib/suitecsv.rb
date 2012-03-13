@@ -202,10 +202,8 @@ class JoinCSV < SuiteCSV
 	def join(other)
 		
 		# Ensure the other CSV has the keys present
-		@keys.each do |key|
-			if not other.headers.index(key)
-				raise "ERROR: Could not find key column #{key} in other CSV"
-			end
+		if not has_keys?(other)
+			raise "ERROR: Could not find key column #{key} in other CSV"
 		end
 		
 		# Because .length will change as we delete, we must save ahead of time
@@ -230,10 +228,8 @@ class JoinCSV < SuiteCSV
 	
 	def unjoin(other)		
 		# Ensure the other CSV has the keys present
-		@keys.each do |key|
-			if not other.headers.index(key)
-				raise "ERROR: Could not find key column #{key} in other CSV"
-			end
+		if not has_keys?(other)
+			raise "ERROR: Could not find key column #{key} in other CSV"
 		end
 		
 		# Because .length will change as we delete, we must save ahead of time
@@ -256,14 +252,61 @@ class JoinCSV < SuiteCSV
 		end		
 	end
 	
+	def bring(other, cols)
+		# Ensure the other CSV has the keys present
+		if not has_keys?(other)
+			raise "ERROR: Could not find key column #{key} in other CSV"
+		end
+		
+		cols.each do |col|
+			# Make sure it exists in the other CSV
+			if not other.headers.index(col)
+				raise "ERROR: Could not find column #{col} to bring()"
+			end
+			
+			# Make sure its not already in this CSV
+			if @headers.index(col)
+				raise "ERROR: Could not bring column #{col}- it already exists in destination"
+			end
+			
+			# Add the column header
+			@headers<< col;
+		end
+		
+		# Iterate each of our rows, find a match, & add the columns we're bringing
+		@matrix.each do |row|				
+			match_row = also_present?(row, other)
+			
+			if match_row
+				$stdout.puts "Matched row: " + match_row.to_s
+				# Bring each column along for the ride
+				cols.each do |col|
+					row<< match_row[col]
+				end
+			end
+		end
+	end
+	
+	###########################
+	## BEGIN PRIVATE METHODS ##
+	###########################
 	private
+	
+	# Does the other CSV have key columns matching our key?
+	def has_keys?(other)
+		@keys.each do |key|
+			if not other.headers.index(key)
+				return false
+			end
+		end
+	end
 	
 	# Is this row present in the other CSV?
 	def also_present?(row, other)
 	
 		other.each do |other_row|
 			if keys_match?(row, other_row)
-				return true
+				return other_row
 			end
 		end
 		
