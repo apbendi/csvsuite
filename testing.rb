@@ -2,28 +2,30 @@ $LOAD_PATH << "lib"
 
 require 'suitecsv.rb'
 
-sample1 = MergeCSV.new "sample1.csv", ["internal id", "last name"]
-sample1<< [15, "Jones", "Bob"]
-sample1<< [8, "Jobs", "Steve", "37691"]
+sample1 = SuiteCSV.new "sample1.csv"
+
+#sample1 = MergeCSV.new "sample1.csv", ["internal id", "last name"]
+# sample1<< [15, "Jones", "Bob"]
+# sample1<< [8, "Jobs", "Steve", "37691"]
 
 
-sample2 = SuiteCSV.new "sample2.csv"
-#sample2<< [1, "John", "Smith", "65775"]
-#sample2<< [8, "Steve", "Jobs", "37691"] 
-#sample2<< [15, "Bob", "Jones"]
-#sample2<< [14, "New", "Person"]
+# sample2 = SuiteCSV.new "sample2.csv"
+# #sample2<< [1, "John", "Smith", "65775"]
+# #sample2<< [8, "Steve", "Jobs", "37691"] 
+# #sample2<< [15, "Bob", "Jones"]
+# #sample2<< [14, "New", "Person"]
 
-sample1.merge sample2
+# sample1.merge sample2
 
-sample1.write "sample1_results.csv"
+# sample1.write "sample1_results.csv"
 
-sample12 = JoinCSV.new "sample1_results.csv", ["internal id", "last name"]
-sample12.join sample2
-sample12.write "sample2_again.csv"
+# sample12 = JoinCSV.new "sample1_results.csv", ["internal id", "last name"]
+# sample12.join sample2
+# sample12.write "sample2_again.csv"
 
-sample21 = JoinCSV.new "sample1_results.csv", ["internal id", "last name"]
-sample21.unjoin SuiteCSV.new "sample1.csv"
-sample21.write "sample1_again.csv"
+# sample21 = JoinCSV.new "sample1_results.csv", ["internal id", "last name"]
+# sample21.unjoin SuiteCSV.new "sample1.csv"
+# sample21.write "sample1_again.csv"
 
 #contra = SuiteCSV.new "../contra-pamphlet-full.csv"
 #contra.split_zip "zip", "split_zip"

@@ -13,7 +13,7 @@ class SuiteCSV
 	def initialize(filename)
 		myCSV = CSV.new File.new(filename), {:headers => true}
 		@matrix = myCSV.read
-		@headers = myCSV.headers
+		@headers = @matrix.headers
 	end
 	
 	# Given the current zip column and the name of a new column
