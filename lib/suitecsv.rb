@@ -1,5 +1,50 @@
 require 'csv'
 
+module CSValidation
+
+	# Does the other CSV have key columns matching our key?
+	def has_keys?(other)
+		@keys.each do |key|
+			if not other.headers.index(key)
+				return false
+			end
+		end
+	end
+	
+	# Is this row present in the other CSV?
+	def also_present?(row, other)
+	
+		other.each do |other_row|
+			if keys_match?(row, other_row)
+				return other_row
+			end
+		end
+		
+		return false
+	end
+	
+	# Do the keys from my_row match the key from other_row?
+	def keys_match?(my_row, other_row)
+		# Ensure arguments are not nil
+		if not (my_row and other_row)
+			return nil
+		end
+		
+		# If each value at this key doesn't match, return false
+		@keys.each do |key|
+			if not my_row[key].to_s =~ /^#{other_row[key].to_s}$/i
+				return false
+			end
+		end
+		
+		#$stdout.puts "Match: " + my_row["split_zip"] + " AND " + other_row["split_zip"]
+		
+		# If we checked values at each key w/o mismatch, its the same
+		return true
+	end
+
+end
+
 class SuiteCSV
 	# Re-map appropriate methods to the internal table
 	extend Forwardable
@@ -145,24 +190,10 @@ class MergeCSV < SuiteCSV
 		end
 	end
 	
-	###########################
-	## BEGIN PRIVATE METHODS ##
-	###########################
+
 	private
-	
-	# Do the keys from my_row match the key from other_row?
-	def keys_match?(my_row, other_row)
-		
-		# If each value at this key doesn't match, return false
-		@keys.each do |key|
-			if not my_row[key].to_s =~ /^#{other_row[key].to_s}$/i
-				return false
-			end
-		end
-		
-		# If we checked values at each key w/o mismatch, its the same
-		return true
-	end
+	#-------------
+	include CSValidation
 	
 	# Put the other row into our CSV, matching headers
 	def push_row(other_row)
@@ -292,44 +323,5 @@ class JoinCSV < SuiteCSV
 	###########################
 	private
 	
-	# Does the other CSV have key columns matching our key?
-	def has_keys?(other)
-		@keys.each do |key|
-			if not other.headers.index(key)
-				return false
-			end
-		end
-	end
-	
-	# Is this row present in the other CSV?
-	def also_present?(row, other)
-	
-		other.each do |other_row|
-			if keys_match?(row, other_row)
-				return other_row
-			end
-		end
-		
-		return false
-	end
-	
-	# Do the keys from my_row match the key from other_row?
-	def keys_match?(my_row, other_row)
-		# Ensure arguments are not nil
-		if not (my_row and other_row)
-			return nil
-		end
-		
-		# If each value at this key doesn't match, return false
-		@keys.each do |key|
-			if not my_row[key].to_s =~ /^#{other_row[key].to_s}$/i
-				return false
-			end
-		end
-		
-		#$stdout.puts "Match: " + my_row["split_zip"] + " AND " + other_row["split_zip"]
-		
-		# If we checked values at each key w/o mismatch, its the same
-		return true
-	end
+	include CSValidation 
 end

@@ -8,8 +8,9 @@ sample1 = SuiteCSV.new "sample1.csv"
 # sample1<< [15, "Jones", "Bob"]
 # sample1<< [8, "Jobs", "Steve", "37691"]
 
-
-# sample2 = SuiteCSV.new "sample2.csv"
+sample2 = JoinCSV.new "sample2.csv", ["internal id", "last name"]
+sample2.unjoin sample1
+sample2.write "results.csv"
 # #sample2<< [1, "John", "Smith", "65775"]
 # #sample2<< [8, "Steve", "Jobs", "37691"] 
 # #sample2<< [15, "Bob", "Jones"]
