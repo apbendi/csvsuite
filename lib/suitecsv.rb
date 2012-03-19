@@ -192,7 +192,7 @@ class MergeCSV < SuiteCSV
 	
 
 	private
-	#-------------
+	#######
 	include CSValidation
 	
 	# Put the other row into our CSV, matching headers
@@ -318,10 +318,7 @@ class JoinCSV < SuiteCSV
 		end
 	end
 	
-	###########################
-	## BEGIN PRIVATE METHODS ##
-	###########################
 	private
-	
+	#######
 	include CSValidation 
 end
