@@ -189,7 +189,6 @@ class MergeCSV < SuiteCSV
 			end
 		end
 	end
-	
 
 	private
 	#######
