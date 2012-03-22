@@ -3,7 +3,7 @@ require 'csv'
 class SuiteCSV
 	# Re-map appropriate methods to the internal table
 	extend Forwardable
-	def_delegators :@matrix, :<<, :each 
+	def_delegators :@matrix, :<<, :[], :each, :length
 	
 	attr_reader :headers
 	
