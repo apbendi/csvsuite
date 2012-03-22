@@ -33,7 +33,6 @@ class TestSuiteCSV < Test::Unit::TestCase
 	end
 
 	def test_read
-
 		# Initialize a (stardard Ruby) CSV version of this file
 		csv_sample1 = CSV.new File.new("sample1.csv"), {:headers => true}
 		table_sample1 = csv_sample1.read
@@ -77,6 +76,32 @@ class TestSuiteCSV < Test::Unit::TestCase
 
 		# Ensure output file is the same as the input file
 		assert_equal table_sample1, table_sample1_out, "Written File does not match File read"
+	end
+
+	def test_split_zip
+		# Ensure invalid column arguments produce RuntimeErrors
+		assert_raise(RuntimeError, "False Zip Column did not cause Error") { @sample1.split_zip "fake_zip", "slit_zip" }
+		assert_raise(RuntimeError, "Provided existing Column w/o Error") { @sample1.split_zip "zip", "internal id" }
+
+		# Split the zip w/ no errors
+		assert_nothing_raised { @sample1.split_zip "zip", "split_zip"}
+
+		# Make sure split_zip has been added to headers
+		assert @sample1.headers.index "split_zip"
+
+		# Iterate each row and ensure split_zip has worked correctly
+		assert_nothing_raised(RuntimeError) do
+			@sample1.each do |row|
+				if not row["zip"].split("-").first == row["split_zip"]
+					raise "zip & split_zip columns don't match at #{row.to_s}"
+				end
+			end
+		end
+
+	end
+
+	def test_excelify
+		
 	end
 
 end
