@@ -122,8 +122,11 @@ class TestSuiteCSV < Test::Unit::TestCase
 		# Read the file we just wrote and look for the excelification
 		assert_nothing_raised do
 			File.open("sample1_excelified.csv", "r") do |handle|
+				first_line = true
 				while line = handle.gets
-					if not line.match(/=\".*\"/) #"
+					if first_line
+						first_line = false
+					elsif not line.match(/=\".*\"/) #"
 						raise "Line in file not excelified after write: #{line}"
 					end
 				end
