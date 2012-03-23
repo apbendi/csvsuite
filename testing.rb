@@ -101,7 +101,36 @@ class TestSuiteCSV < Test::Unit::TestCase
 	end
 
 	def test_excelify
-		
+		# Ensure invalid column arguments produce RuntimeErrors
+		assert_raise(RuntimeError, "False Column to excelify did not cause Error") { @sample1.excelify("fake_zip") }
+
+		# Excelify the column w/ no errors
+		assert_nothing_raised { @sample1.excelify "zip" }
+
+		# Iterate each zip row & ensure its been excelified
+		assert_nothing_raised(RuntimeError) do
+			@sample1.each do |row|
+				if not row["zip"].match(/^\|EXCEL_OPEN\|.*\|EXCEL_CLOSE\|$/)
+					raise "Row was not excelified: #{row.to_s}"
+				end
+			end
+		end
+
+		# Write the file out
+		assert_nothing_raised("Could not write after excelify") { @sample1.write "sample1_excelified.csv" }
+
+		# Read the file we just wrote and look for the excelification
+		assert_nothing_raised do
+			File.open("sample1_excelified.csv", "r") do |handle|
+				while line = handle.gets
+					if not line.match(/=\".*\"/) #"
+						raise "Line in file not excelified after write: #{line}"
+					end
+				end
+			end
+		end
+
+		#
 	end
 
 end
