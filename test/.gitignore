@@ -1,0 +1,13 @@
+# Any CSV Files #
+#################
+*.csv
+
+## OS generated files #
+#######################
+.DS_Store*
+
+## Emacs generated files #
+##########################
+*~
+\#*
+*\#
