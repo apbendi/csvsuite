@@ -1,4 +1,4 @@
-$LOAD_PATH << "lib"
+$LOAD_PATH << "../lib"
 
 require 'suitecsv.rb'
 require 'test/unit'
