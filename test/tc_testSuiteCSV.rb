@@ -120,8 +120,6 @@ class TestSuiteCSV < Test::Unit::TestCase
 				end
 			end
 		end
-
-		#
 	end
 
 end

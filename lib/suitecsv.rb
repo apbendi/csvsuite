@@ -5,7 +5,8 @@ class SuiteCSV
 	extend Forwardable
 	def_delegators :@matrix, :<<, :[], :==, :each, :length
 	
-	attr_reader :headers
+	#attr_reader :headers
+	attr_accessor :headers
 	
 	# Only accept filenames, not strings, when defining a CSV
 	# Always require headers to be true
