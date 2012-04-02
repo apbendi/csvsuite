@@ -29,9 +29,9 @@ class TestSuiteCSV < Test::Unit::TestCase
 		assert_not_nil @sample1
 
 		# Ensure headers have been correctly read
-		assert @sample1.headers.index("internal id"), "Header not found: internal id"
-		assert @sample1.headers.index("last name"), "Header not found: last name"
-		assert @sample1.headers.index("zip"), "Header not found: zip"
+		assert @sample1.headers.index("Internal ID"), "Header not found: internal id"
+		assert @sample1.headers.index("Last Name"), "Header not found: last name"
+		assert @sample1.headers.index("Zip"), "Header not found: zip"
 		assert  ( not @sample1.headers.index("Fake_Header") ), "Fake_Header returning true"
 
 		# SuiteCSV headers should match CSV headers
@@ -58,7 +58,7 @@ class TestSuiteCSV < Test::Unit::TestCase
 
 		# Initialize a CSV version of the file we just wrote
 		assert_nothing_raised("Written File could not be read by CSV") do
-			csv_sample1_out = CSV.new File.new("sample2.csv"), {:headers => true}
+			csv_sample1_out = CSV.new File.new("sample1_out.csv"), {:headers => true}
 			table_sample1_out = csv_sample1_out.read
 		end
 
@@ -69,10 +69,10 @@ class TestSuiteCSV < Test::Unit::TestCase
 	def test_split_zip
 		# Ensure invalid column arguments produce RuntimeErrors
 		assert_raise(RuntimeError, "False Zip Column did not cause Error") { @sample1.split_zip "fake_zip", "slit_zip" }
-		assert_raise(RuntimeError, "Provided existing Column w/o Error") { @sample1.split_zip "zip", "internal id" }
+		assert_raise(RuntimeError, "Provided existing Column w/o Error") { @sample1.split_zip "Zip", "Internal ID" }
 
 		# Split the zip w/ no errors
-		assert_nothing_raised { @sample1.split_zip "zip", "split_zip"}
+		assert_nothing_raised { @sample1.split_zip "Zip", "split_zip"}
 
 		# Make sure split_zip has been added to headers
 		assert @sample1.headers.index "split_zip"
@@ -80,8 +80,8 @@ class TestSuiteCSV < Test::Unit::TestCase
 		# Iterate each row and ensure split_zip has worked correctly
 		assert_nothing_raised(RuntimeError) do
 			@sample1.each do |row|
-				if not row["zip"].split("-").first == row["split_zip"]
-					raise "zip & split_zip columns don't match at #{row.to_s}"
+				if not row["Zip"].split("-").first == row["split_zip"]
+					raise "Zip & split_zip columns don't match at #{row.to_s}"
 				end
 			end
 		end
@@ -93,12 +93,12 @@ class TestSuiteCSV < Test::Unit::TestCase
 		assert_raise(RuntimeError, "False Column to excelify did not cause Error") { @sample1.excelify("fake_zip") }
 
 		# Excelify the column w/ no errors
-		assert_nothing_raised { @sample1.excelify "zip" }
+		assert_nothing_raised { @sample1.excelify "Zip" }
 
 		# Iterate each zip row & ensure its been excelified
 		assert_nothing_raised(RuntimeError) do
 			@sample1.each do |row|
-				if not row["zip"].match(/^\|EXCEL_OPEN\|.*\|EXCEL_CLOSE\|$/)
+				if not row["Zip"].match(/^\|EXCEL_OPEN\|.*\|EXCEL_CLOSE\|$/)
 					raise "Row was not excelified: #{row.to_s}"
 				end
 			end
