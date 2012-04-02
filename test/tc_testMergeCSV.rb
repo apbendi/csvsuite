@@ -5,14 +5,6 @@ require 'test/unit'
 
 class TestMergeCSV < Test::Unit::TestCase
 
-	def setup
-
-	end
-
-	def teardown
-
-	end
-
 	def test_init
 		assert_nothing_raised { MergeCSV.new "sample1.csv", ["Internal ID", "Last Name"]}
 		assert_raise(ArgumentError) { MergeCSV.new }
@@ -22,6 +14,13 @@ class TestMergeCSV < Test::Unit::TestCase
 	end
 
 	def test_merge
+		assert_nothing_raised do
+			@sample1 = MergeCSV.new "sample1.csv", ["Internal ID", "Last Name"]
+		 	@sample2 = SuiteCSV.new "sample2.csv"
+		 	@sample1.merge @sample2
+		 	@sample1.write "sample1-2_merge.csv"
+		end
 
+		# NEED A TEST OF AN ATTEMPTED MERGE WHERE COLUMNS DON'T EXIST IN DESTINATION & VICE VERSA
 	end
 end
