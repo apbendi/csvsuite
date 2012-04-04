@@ -15,12 +15,41 @@ class TestMergeCSV < Test::Unit::TestCase
 
 	def test_merge
 		assert_nothing_raised do
-			@sample1 = MergeCSV.new "sample1.csv", ["Internal ID", "Last Name"]
-		 	@sample2 = SuiteCSV.new "sample2.csv"
-		 	@sample1.merge @sample2
-		 	@sample1.write "sample1-2_merge.csv"
+			sample1 = MergeCSV.new "sample1.csv", ["Internal ID", "Last Name"]
+		 	sample2 = SuiteCSV.new "sample2.csv"
+		 	sample1.merge sample2
+		 	sample1.write "sample1-2_merge.csv"
 		end
 
-		# NEED A TEST OF AN ATTEMPTED MERGE WHERE COLUMNS DON'T EXIST IN DESTINATION & VICE VERSA
+		# Initialize a CVS versions of the answer & our result
+		csv_1_2_merge 	= CSV.new File.new("sample1-2_merge.csv"), {:headers => true}
+		table_1_2_merge = csv_1_2_merge.read
+		csv_1_2_ans 	= CSV.new File.new("sample1-2_merge_ans.csv"), {:headers => true}
+		table_1_2_ans 	= csv_1_2_ans.read
+
+		# Ensure our results match the known, correct answer
+		assert_equal table_1_2_merge, table_1_2_ans, "Merge did not produce expected results"
+	end
+
+	def test_merge2
+		sample1 = MergeCSV.new "sample1.csv", ["Internal ID", "Last Name"]
+		full 	= MergeCSV.new "us_presidents_full.csv", ["Internal ID", "Last Name"]
+
+		# If the source CSV lacks columns in the destination, there should be an error
+		assert_raise(RuntimeError) { full.merge sample1 }
+
+		assert_nothing_raised() do
+			sample1.merge full
+			sample1.write "sample1-full_merge_mer.csv"
+		end
+
+		# Initialize a CVS versions of the answer & our result
+		csv_1_full_merge 	= CSV.new File.new("sample1-full_merge_mer.csv"), {:headers => true}
+		table_1_full_merge 	= csv_1_full_merge.read
+		csv_1_full_ans 		= CSV.new File.new("sample1-full_merge_ans.csv"), {:headers => true}
+		table_1_full_ans 	= csv_1_full_ans.read
+
+		# Ensure our results match the known, correct answer
+		assert_equal csv_1_full_ans, csv_1_full_merge
 	end
 end
