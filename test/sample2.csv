@@ -1,29 +1,29 @@
-Internal ID,First Name,Last Name,Party,Home State,Zip
-1,George Washington,Washington,Independent ,Virginia,22302-1234
-3,Thomas ,Jefferson,Democratic-Republican ,Virginia,22302-1234
-4,James ,Madison,Democratic-Republican ,Virginia,22302-1234
-5,James ,Monroe,Democratic-Republican ,Virginia,22302-1234
-7,Andrew ,Jackson,Democratic ,Tennessee,37403-1234
-10,John ,Tyler,Whig,Virginia,22302-1234
-11,James K. ,Polk,Democratic ,Tennessee,37403-1234
-12,Zachary ,Taylor,Whig,Louisiana,71263-4930
-17,Andrew ,Johnson,Democratic/National Union,Tennessee,37403-1234
-34,Dwight D. ,Eisenhower,Republican ,Texas,75640-4576
-36,Lyndon B. ,Johnson,Democratic,Texas,75640-4576
-39,Jimmy ,Carter,Democratic ,Georgia,30313-3333
-41,George H. W. ,Bush,Republican ,Texas,75640-4576
-42,Bill ,Clinton,Democratic ,Arkansas,71901-9999
-43,George W. ,Bush,Republican ,Texas,75640-4576
-9,William Henry ,Harrison,Whig,Ohio,43085-0000
-16,Abraham ,Lincoln,Republican/National Union,Illinois,62059-1111
-18,Ulysses S. ,Grant,Republican ,Ohio,43085-0000
-19,Rutherford B. ,Hayes,Republican ,Ohio,43085-0000
-20,James A. ,Garfield,Republican ,Ohio,43085-0000
-23,Benjamin ,Harrison,Republican ,Indiana,46117-7654
-25,William ,McKinley,Republican ,Ohio,43085-0000
-27,William Howard ,Taft,Republican ,Ohio,43085-0000
-29,Warren G. ,Harding,Republican ,Ohio,43085-0000
-31,Herbert ,Hoover,Republican ,Iowa,50057-2956
-33,Harry S. ,Truman,Democratic,Missouri,63332-5555
-38,Gerald ,Ford,Republican,Michigan,48105-0127
-44,Barack ,Obama,Democratic   ,Illinois,62059-1111
+Internal ID,First Name,Last Name,Party,Home State,Zip,From Sample
+1,George Washington,Washington,Independent ,Virginia,22302-1234,2
+3,Thomas ,Jefferson,Democratic-Republican ,Virginia,22302-1234,2
+4,James ,Madison,Democratic-Republican ,Virginia,22302-1234,2
+5,James ,Monroe,Democratic-Republican ,Virginia,22302-1234,2
+7,Andrew ,Jackson,Democratic ,Tennessee,37403-1234,2
+10,John ,Tyler,Whig,Virginia,22302-1234,2
+11,James K. ,Polk,Democratic ,Tennessee,37403-1234,2
+12,Zachary ,Taylor,Whig,Louisiana,71263-4930,2
+17,Andrew ,Johnson,Democratic/National Union,Tennessee,37403-1234,2
+34,Dwight D. ,Eisenhower,Republican ,Texas,75640-4576,2
+36,Lyndon B. ,Johnson,Democratic,Texas,75640-4576,2
+39,Jimmy ,Carter,Democratic ,Georgia,30313-3333,2
+41,George H. W. ,Bush,Republican ,Texas,75640-4576,2
+42,Bill ,Clinton,Democratic ,Arkansas,71901-9999,2
+43,George W. ,Bush,Republican ,Texas,75640-4576,2
+9,William Henry ,Harrison,Whig,Ohio,43085-0000,2
+16,Abraham ,Lincoln,Republican/National Union,Illinois,62059-1111,2
+18,Ulysses S. ,Grant,Republican ,Ohio,43085-0000,2
+19,Rutherford B. ,Hayes,Republican ,Ohio,43085-0000,2
+20,James A. ,Garfield,Republican ,Ohio,43085-0000,2
+23,Benjamin ,Harrison,Republican ,Indiana,46117-7654,2
+25,William ,McKinley,Republican ,Ohio,43085-0000,2
+27,William Howard ,Taft,Republican ,Ohio,43085-0000,2
+29,Warren G. ,Harding,Republican ,Ohio,43085-0000,2
+31,Herbert ,Hoover,Republican ,Iowa,50057-2956,2
+33,Harry S. ,Truman,Democratic,Missouri,63332-5555,2
+38,Gerald ,Ford,Republican,Michigan,48105-0127,2
+44,Barack ,Obama,Democratic   ,Illinois,62059-1111,2

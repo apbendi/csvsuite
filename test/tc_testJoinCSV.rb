@@ -8,10 +8,11 @@ class TestJoinCSV < Test::Unit::TestCase
 	def setup
 		@sample1 = JoinCSV.new "sample1.csv", ["Internal ID", "Last Name"]
 		@sample2 = JoinCSV.new "sample2.csv", ["Internal ID", "Last Name"]
+		@full = JoinCSV.new "us_presidents_full.csv", ["Wikipedia Entry"]
 	end
 
 	def teardown
-		@sample1 = @sample2 = nil
+		@sample1 = @sample2 = @full = nil
 	end
 
 	def test_init
@@ -24,7 +25,8 @@ class TestJoinCSV < Test::Unit::TestCase
 
 	def test_join
 
-		# TEST COLUMN MISMATCHES
+		# Ensure a join where other doesn't have key causes a raise
+		assert_raise(RuntimeError) { @full.join @sample1 }
 
 		# Perform a Join and then verify the results
 		assert_nothing_raised { 
@@ -47,7 +49,8 @@ class TestJoinCSV < Test::Unit::TestCase
 
 	def test_unjoin
 
-		# TEST COLUMN MISMATCHES
+		# Ensure an unjoin where other doesn't have key causes a raise
+		assert_raise(RuntimeError) { @full.unjoin @sample1 }
 
 		# Perform an Unjoin and then verify the results
 		assert_nothing_raised {
@@ -69,14 +72,21 @@ class TestJoinCSV < Test::Unit::TestCase
 
 	def test_bring
 
-		# TEST COLUMN MISMATCHES
+		# If the column to bring is not present, this should cause an error
+		assert_raise(RuntimeError) { @sample1.bring @sample2, ["fake_column"] }
 
+		# If the column to bring is already present, this should cause an error
+		assert_raise(RuntimeError) { @sample1.bring @sample2, ["Party"] }
+
+		# Ensure a bring where other doesn't have key causes a raise
+		assert_raise(RuntimeError) { @full.bring @sample1, ["From Sample"] }
+
+		# Perform a Bring and verify the results
 		assert_nothing_raised {
-			full = SuiteCSV.new "us_presidents_full.csv"
-			@sample1.bring full, ["Wikipedia Entry"]
+			@sample1.bring @full, ["Wikipedia Entry"]
 			@sample1.write "sample1-bring.csv"
 
-
+			# Iterate each row in the new CSV looking for a valid Wikipedia entry
 			bring = SuiteCSV.new "sample1-bring.csv"
 			bring.each do |row|
 				if not row["Wikipedia Entry"]
