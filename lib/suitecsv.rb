@@ -109,26 +109,24 @@ class MergeCSV < SuiteCSV
 	# Afterwards this CSV will be the combination of the two
 	# without duplicates, based on comparison of keys
 	def merge(other)
-		
 		# Ensure the other CSV has the same headers
 		@headers.each do |header|
 			if not other.headers.index(header)
 				raise "ERROR: headers do not match, could not find: #{header}"
 			end
 		end
+
+		# Initialize variable to process rows processed & added
+		counter = added = 0
 		
 		# Go through each row in the other CSV
 		other.each do |other_row|
-			$stdout.puts ">Line: " + other_row.to_s
-		
+			counter += 1
 			# init the var to track whether this row is already present
 			already_present = false
 			
 			# Go through each row in myself, see if the other's row is here
 			@matrix.each do |my_row|
-			
-				$stdout.puts "\tTesting: " + my_row.to_s
-			
 				# If the keys match this row is present - stop checking
 				if keys_match?(my_row, other_row)
 					already_present = true
@@ -138,12 +136,16 @@ class MergeCSV < SuiteCSV
 			
 			# Add this row to our table
 			if not already_present
-				$stdout.puts "Adding row: #{other_row}"
 				push_row other_row
-			else
-				$stdout.puts "Ignoring match: #{other_row}"
+				added += 1
 			end
+
+			#if counter % 500 == 0
+			#	$stdout.puts counter
+			#end
 		end
+
+		return added
 	end
 	
 	###########################
@@ -204,7 +206,7 @@ class JoinCSV < SuiteCSV
 		
 		# Ensure the other CSV has the keys present
 		if not has_keys?(other)
-			raise "ERROR: Could not find key column #{key} in other CSV"
+			raise "ERROR: Could not find all key columns #{@keys.to_s} in other CSV"
 		end
 		
 		# Because .length will change as we delete, we must save ahead of time
@@ -230,7 +232,7 @@ class JoinCSV < SuiteCSV
 	def unjoin(other)		
 		# Ensure the other CSV has the keys present
 		if not has_keys?(other)
-			raise "ERROR: Could not find key column #{key} in other CSV"
+			raise "ERROR: Could not find all key columns #{@keys.to_s} in other CSV"
 		end
 		
 		# Because .length will change as we delete, we must save ahead of time
@@ -256,7 +258,7 @@ class JoinCSV < SuiteCSV
 	def bring(other, cols)
 		# Ensure the other CSV has the keys present
 		if not has_keys?(other)
-			raise "ERROR: Could not find key column #{key} in other CSV"
+			raise "ERROR: Could not find all key columns #{@keys.to_s} in other CSV"
 		end
 		
 		cols.each do |col|
@@ -279,7 +281,6 @@ class JoinCSV < SuiteCSV
 			match_row = also_present?(row, other)
 			
 			if match_row
-				$stdout.puts "Matched row: " + match_row.to_s
 				# Bring each column along for the ride
 				cols.each do |col|
 					row<< match_row[col]
