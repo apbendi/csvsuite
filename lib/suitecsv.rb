@@ -151,8 +151,8 @@ class MergeCSV < SuiteCSV
 	end
 	
 	# Take another CSV & Merge it into this CSV.
-	# Afterwards this CSV will be the combination of the two
-	# without duplicates, based on comparison of keys
+	# Afterwards this CSV will be itself with the addition of the second,
+	# excluding duplicates, based on comparison of keys
 	def merge(other)
 		# Ensure the other CSV has the same headers
 		@headers.each do |header|
