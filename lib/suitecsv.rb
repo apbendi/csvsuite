@@ -1,6 +1,14 @@
 require 'csv'
 
 module CSValidation
+	# Ensure my CSV actually has the keys assigned it
+	def key_check
+		@keys.each do |key|
+			if not @headers.index(key)
+				raise "ERROR: could not find header for key: #{key}"
+		  	end
+		end
+	end
 
 	# Does the other CSV have key columns matching our key?
 	def has_keys?(other)
@@ -43,6 +51,33 @@ module CSValidation
 		return true
 	end
 
+	def already_present?(other_row)
+		# Go through each row in myself, see if the other's row is here
+		@matrix.each do |my_row|
+			# If the keys match this row is present - stop checking
+			if keys_match?(my_row, other_row)
+				return true
+			end
+		end
+
+		return false
+	end
+
+	# Put the other row into our CSV, matching headers
+	def push_row(other_row)
+		# initialize the new array
+		new_row = Array.new(@headers.length)
+		
+		# Iterate headers, building our new row
+		0.upto @headers.length-1 do |index|		
+			
+			# Put the value into the corresponding column in our CSV
+			new_row[index] = other_row[ @headers[index] ]
+		end
+		
+		# Add this row into our matrix
+		@matrix<< new_row
+	end
 end
 
 class SuiteCSV
@@ -141,13 +176,7 @@ class MergeCSV < SuiteCSV
 	def initialize(filename, keys)
 		@keys = keys
 		super(filename)
-		
-		# Ensure the CSV has a header for each defined key
-		@keys.each do |key|
-			if not @headers.index(key)
-				raise "ERROR: could not find header for key: #{key}"
-		  	end
-		end
+		key_check
 	end
 	
 	# Take another CSV & Merge it into this CSV.
@@ -167,20 +196,9 @@ class MergeCSV < SuiteCSV
 		# Go through each row in the other CSV
 		other.each do |other_row|
 			counter += 1
-			# init the var to track whether this row is already present
-			already_present = false
-			
-			# Go through each row in myself, see if the other's row is here
-			@matrix.each do |my_row|
-				# If the keys match this row is present - stop checking
-				if keys_match?(my_row, other_row)
-					already_present = true
-					break
-				end
-			end
 			
 			# Add this row to our table
-			if not already_present
+			if not already_present?(other_row)
 				push_row other_row
 				added += 1
 			end
@@ -196,22 +214,6 @@ class MergeCSV < SuiteCSV
 	private
 	#######
 	include CSValidation
-	
-	# Put the other row into our CSV, matching headers
-	def push_row(other_row)
-		# initialize the new array
-		new_row = Array.new(@headers.length)
-		
-		# Iterate headers, building our new row
-		0.upto @headers.length-1 do |index|		
-			
-			# Put the value into the corresponding column in our CSV
-			new_row[index] = other_row[ @headers[index] ]
-		end
-		
-		# Add this row into our matrix
-		@matrix<< new_row
-	end
 end
 
 class JoinCSV < SuiteCSV
@@ -221,13 +223,7 @@ class JoinCSV < SuiteCSV
 	def initialize(filename, keys)
 		@keys = keys
 		super(filename)
-		
-		# Ensure the CSV has a header for each defined key
-		@keys.each do |key|
-			if not @headers.index(key)
-				raise "ERROR: could not find header for key: #{key}"
-		  	end
-		end
+		key_check
 	end
 	
 	# Take two CSVs and produce a result that is the overlap of
@@ -303,7 +299,7 @@ class JoinCSV < SuiteCSV
 			end
 			
 			# Add the column header
-			@headers<< col;
+			@headers<< col
 		end
 		
 		# Iterate each of our rows, find a match, & add the columns we're bringing
@@ -322,4 +318,67 @@ class JoinCSV < SuiteCSV
 	private
 	#######
 	include CSValidation 
+end
+
+class ComboCSV < SuiteCSV
+	attr_reader :keys
+
+	def initialize(filename, keys)
+		@keys = keys
+		super(filename)
+		key_check
+	end
+
+	def combine(other)
+		# Ensure the other CSV has the keys present
+		if not has_keys?(other)
+			raise "ERROR: Could not find all key columns #{@keys.to_s} in other CSV"
+		end
+
+		# Initialize the array where we'll keep track of columns added
+		new_cols = Array.new
+
+		# Iterate each column in the other CSV
+		other.headers.each do |col|
+			# If this column is a key, its safe
+			if @keys.index(col)
+				next
+			end
+
+			# If this column is NOT a key, but IS present, it
+			# poses a conflict for the combine process
+			if @headers.index(col)
+				raise "ERROR: Cannot combine due to conflicting, non-key column: #{col}"
+			end
+
+			# Add the column header
+			@headers<< col
+			new_cols<< col
+		end
+
+		# Iterate each of our rows & if we find a match, bring the columns from the other
+		@matrix.each do |row|
+			match_row = also_present?(row, other)
+
+			if match_row
+				# Bring each column along
+				new_cols.each do |new_col|
+					row<< match_row[new_col]
+				end
+			end
+		end
+
+		# Iterate all the rows in the other CSV, and add them
+		# in if they're not yet present here
+		other.each do |other_row|
+			if not already_present?(other_row)
+				push_row other_row
+			end
+		end
+
+	end
+
+	private
+	#######
+	include CSValidation
 end
