@@ -185,9 +185,9 @@ class MergeCSV < SuiteCSV
 				added += 1
 			end
 
-			#if counter % 500 == 0
-			#	$stdout.puts counter
-			#end
+			if counter % 500 == 0
+				$stdout.puts counter
+			end
 		end
 
 		return added
