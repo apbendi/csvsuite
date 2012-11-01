@@ -169,6 +169,50 @@ class SuiteCSV
 	
 end
 
+# Not happy about making this a class- but lets face it, we need to rethink
+# the whole archictecture of this thing- so this will do for now.
+class DedupeCSV < SuiteCSV
+	attr_reader :keys
+
+	def initialize(filename, keys)
+		@keys = keys
+		super(filename)
+		key_check
+	end
+
+	def dedupe
+		comp_matrix = Array.new
+
+		# Because .length will change as we delete, we must save ahead of time
+		# and also track the number of rows we've removed
+		length = @matrix.length
+		removed_count = 0
+		
+		# Iterate our matrix removing rows not present in the other CSV
+		0.upto length do |index|
+			# nil row check
+			if not @matrix[index-removed_count]
+				next
+			end
+			
+			# If this row is NOT also present in other, delete it here
+			if also_present?(@matrix[index-removed_count], comp_matrix)\
+
+				puts "Delete: #{@matrix[index-removed_count].to_s}"
+
+				@matrix.delete(index-removed_count)
+				removed_count += 1
+			else
+				comp_matrix.push @matrix[index-removed_count]
+			end
+		end
+	end
+
+	private
+	#######
+	include CSValidation
+end
+
 class MergeCSV < SuiteCSV
 
 	attr_reader :keys
