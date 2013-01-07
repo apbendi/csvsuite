@@ -186,10 +186,11 @@ class DedupeCSV < SuiteCSV
 		# Because .length will change as we delete, we must save ahead of time
 		# and also track the number of rows we've removed
 		length = @matrix.length
-		removed_count = 0
+		counter = removed_count = 0
 		
 		# Iterate our matrix removing rows not present in the other CSV
 		0.upto length do |index|
+			counter += 1
 			# nil row check
 			if not @matrix[index-removed_count]
 				next
@@ -198,14 +199,20 @@ class DedupeCSV < SuiteCSV
 			# If this row is NOT also present in other, delete it here
 			if also_present?(@matrix[index-removed_count], comp_matrix)\
 
-				puts "Delete: #{@matrix[index-removed_count].to_s}"
+				#puts "Delete: #{@matrix[index-removed_count].to_s}"
 
 				@matrix.delete(index-removed_count)
 				removed_count += 1
 			else
 				comp_matrix.push @matrix[index-removed_count]
 			end
+
+			if counter % 500 == 0
+				$stdout.puts counter
+			end
 		end
+
+		return removed_count
 	end
 
 	private
