@@ -36,6 +36,8 @@ end
 addy_csv.headers<< "split_zip"
 addy_csv.headers<< "addr_num"
 
+non_norm_count = 0
+
 # Iterate each row of the CSV & perform the normalization
 addy_csv.each do |row|	
 
@@ -61,7 +63,7 @@ addy_csv.each do |row|
 		city_name = city_name.gsub(/St\.?/i, "Saint")
 	end
 
-	orig_addy = row["addr"].to_s + " " + row["addr2"].to_s + " " + city_name.to_s + ", " + row["state"].to_s + " " + row["zip"].to_s
+	orig_addy = row["addr"].to_s + " " + row["addr2"].to_s + ", " + city_name.to_s + ", " + row["state"].to_s + " " + row["zip"].to_s
 	norm_addy = StreetAddress.parse(orig_addy)
 
 	if norm_addy
@@ -92,9 +94,11 @@ addy_csv.each do |row|
 		row["state"] = ""
 		row["zip"] = ""
 		row["split_zip"] = ""
+		non_norm_count = non_norm_count + 1
 	end
 end
 
-addy_csv.excelify "zip"
+#addy_csv.excelify "zip"
+puts "#{non_norm_count} addresses could not be normalized"
 
 addy_csv.write "addy_out.csv"
