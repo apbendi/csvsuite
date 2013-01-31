@@ -306,6 +306,7 @@ class JoinCSV < SuiteCSV
 		end
 	end
 	
+	# Remove all rows in this CSV that _are_ also present in the other
 	def unjoin(other)		
 		# Ensure the other CSV has the keys present
 		if not has_keys?(other)
@@ -317,7 +318,7 @@ class JoinCSV < SuiteCSV
 		length = @matrix.length
 		removed_count = 0
 		
-		# Iterate our matrix removing rows not present in the other CSV
+		# Iterate our matrix removing rows present in the other CSV
 		0.upto length do |index|
 			# nil row check
 			if not @matrix[index-removed_count]
