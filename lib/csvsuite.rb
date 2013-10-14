@@ -1,3 +1,5 @@
+require 'csvsuite/version'
+require 'csvsuite/csvsuite_utils'
 require 'csv'
 
 module CSVSuite	

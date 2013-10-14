@@ -8,12 +8,12 @@ Gem::Specification.new do |gem|
   gem.version       = CSVSuite::VERSION
   gem.authors       = ["Ben Di"]
   gem.email         = ["bdifrancesco@ascensionpress.com"]
-  gem.description   = %q{TODO: Write a gem description}
-  gem.summary       = %q{TODO: Write a gem summary}
+  gem.description   = %q{Classes for doign things with CSVs easier}
+  gem.summary       = %q{Wrap around csv class for easier merging, etc...}
   gem.homepage      = ""
 
   gem.files         = `git ls-files`.split($/)
-  gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
+  gem.executables   = ["mergify"]
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.require_paths = ["lib"]
 end
