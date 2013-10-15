@@ -20,19 +20,32 @@ module CSVSuite
 
 
     def self.mergify(base_file, merge_in_file, merge_columns)
-      base_file = MergeCSV.new base_file, merge_columns
-      merge_in_file = SuiteCSV.new merge_in_file
-      base_file.merge merge_in_file
+      base = MergeCSV.new base_file, merge_columns
+      merge_in = SuiteCSV.new merge_in_file
+      base.merge merge_in
 
-      new_file_name = "Mergify-#{File.basename(base_file)}-#{File.basename(merge_in_file)}.csv"
-      base_file.write(new_file_name)
+      new_file_name = "Mergify-#{File.basename(base_file, ".*")}-#{File.basename(merge_in_file, ".*")}.csv"
+      base.write(new_file_name)
       return new_file_name
+    end
+
+    def self.cmd_excelify(args)
+      return print_excelify_usage
+    end
+
+    def self.excelify(args)
+
     end
 
     private
 
     def self.print_mergify_usage
       puts "Usage: mergify base_file merge_in_file \"column_key_1,column_key_2\""
+      return false
+    end
+
+    def self.print_excelify_usage
+      puts "Usage: excelify file_name column"
       return false
     end
 
