@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+
+require 'csvsuite'
+
+CSVSuite::Utils.cmd_mergify(ARGV.dup)
